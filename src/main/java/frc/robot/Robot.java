@@ -5,11 +5,8 @@
 package frc.robot;
 
 import frc.robot.Logger;
-import frc.robot.subsystems.SwerveDrive.DriveSubsystem;
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotController;
@@ -75,8 +72,6 @@ public class Robot extends TimedRobot {
     null, //"14",
     null, //"15",
 };
-
-  private boolean wasAutonExecuted = false;
 
   public Robot(){
     CanBridge.runTCP();

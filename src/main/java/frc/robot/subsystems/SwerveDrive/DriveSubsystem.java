@@ -4,21 +4,12 @@ import frc.robot.Logger;
 import frc.robot.subsystems.Vision.LimelightHelpers;
 import frc.robot.subsystems.Vision.PhotonCameraCfg;
 import frc.robot.subsystems.Vision.PhotonVisionCamera;
-import frc.robot.subsystems.Vision.ReefMap;
-import frc.robot.subsystems.Vision.ReefMap.Side;
 import frc.robot.subsystems.Vision.LimelightHelpers.RawFiducial;
-
-import java.util.List;
-import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -30,7 +21,6 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -86,7 +76,7 @@ public class DriveSubsystem extends SubsystemBase{
   private final PhotonVisionCamera leftPhotonCamera;
   private final PhotonVisionCamera rightPhotonCamera;
   
-  private final ReefMap reefMap = new ReefMap();
+  //private final ReefMap reefMap = new ReefMap();
 
   private Pose2d pose = new Pose2d();
   private Pose2d limelightPose = new Pose2d();
@@ -417,11 +407,9 @@ public class DriveSubsystem extends SubsystemBase{
   }
 
   private void updatePhotonVisionPose(){
-    //var leftPoseEstimate = leftPhotonCamera.getEstimatedGlobalPose();
     var leftPoseEstimate = leftPhotonCamera.processCamera(getEstimatedPose2d());
     
-    if((leftPoseEstimate.isPresent())&&
-       (!isReefPathScheduled())){
+    if(leftPoseEstimate.isPresent()){
       photonLeftPose = leftPoseEstimate.get().estimatedPose.toPose2d();
       var timestampLeft = leftPoseEstimate.get().timestampSeconds;
 
@@ -431,11 +419,9 @@ public class DriveSubsystem extends SubsystemBase{
 
     }
 
-    //var rightPoseEstimate = rightPhotonCamera.getEstimatedGlobalPose();
     var rightPoseEstimate = rightPhotonCamera.processCamera(getEstimatedPose2d());
 
-    if((rightPoseEstimate.isPresent())&&
-       (!isReefPathScheduled())){
+    if(rightPoseEstimate.isPresent()){
       photonRightPose = rightPoseEstimate.get().estimatedPose.toPose2d();
       var timestampRight = rightPoseEstimate.get().timestampSeconds;
       poseEstimator.addVisionMeasurement(photonRightPose,
@@ -446,70 +432,6 @@ public class DriveSubsystem extends SubsystemBase{
 
   public void setTargetPosition(Pose2d targetPosition){
     targetPose = targetPosition;
-  }
-
-  public void moveToReefLeft(){
-    int tagId = getLimelightFiducialId();
-    if(reefMap.isPosePresent(tagId, Side.LEFT)){
-      System.out.println("Building Path to Left!");
-      targetPose = reefMap.getReefPose2d(tagId, Side.LEFT);
-      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(estimatedPose,targetPose);
-      PathPlannerPath path = new PathPlannerPath(waypoints,
-                                                 new PathConstraints(DrivebaseCfg.MAX_SPEED_AUTO_ALIGN,
-                                                                     DrivebaseCfg.MAX_ACCEL_AUTO_ALIGN, 
-                                                                     Units.degreesToRadians(360), 
-                                                                     Units.degreesToRadians(540)),
-                                                 null,
-                                                 new GoalEndState(tagId, targetPose.getRotation())
-                                 );
-      path.preventFlipping = true;
-      //AutoBuilder.followPath(path).schedule();
-      reefPath = AutoBuilder.followPath(path);
-      reefPath.schedule();
-    }else{
-      System.out.println("No Reef pose found!");
-    } 
-  }
-
-  public void moveToReefRight(){
-    int tagId = getLimelightFiducialId();
-    if(reefMap.isPosePresent(tagId, Side.RIGHT)){
-      System.out.println("Building Path to Right!");
-      targetPose = reefMap.getReefPose2d(tagId, Side.RIGHT);
-      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(estimatedPose,targetPose);
-      PathPlannerPath path = new PathPlannerPath(waypoints,
-                                                 new PathConstraints(DrivebaseCfg.MAX_SPEED_AUTO_ALIGN,
-                                                                     DrivebaseCfg.MAX_ACCEL_AUTO_ALIGN, 
-                                                                     Units.degreesToRadians(360), 
-                                                                     Units.degreesToRadians(540)),
-                                                 null,
-                                                 new GoalEndState(0, targetPose.getRotation())
-                                 );
-      path.preventFlipping = true;
-      //AutoBuilder.followPath(path).schedule();
-      reefPath = AutoBuilder.followPath(path);
-      reefPath.schedule();
-    }else{
-      System.out.println("No Reef pose found!");
-    } 
-  }
-
-  public boolean isReefPathScheduled(){
-    boolean isScheduled = false;
-    if((reefPath != null) &&
-       (reefPath.isScheduled())){
-        isScheduled = true;
-       }
-    return isScheduled;
-  }
-
-  public void cancelReefPath(){
-    if((reefPath == null)||
-       (!reefPath.isScheduled())){
-        return;
-    }
-    reefPath.cancel();
-    reefPath = null;
   }
 
   private void configAutoBuilder(){
