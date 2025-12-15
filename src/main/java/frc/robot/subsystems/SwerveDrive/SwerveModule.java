@@ -17,9 +17,9 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.measure.measure.Distance;
-import edu.wpi.first.units.measure.measure.LinearVelocity;
-import edu.wpi.first.units.measure.measure.Voltage;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 
 public class SwerveModule{
   private final SparkFlex driveMotor;
