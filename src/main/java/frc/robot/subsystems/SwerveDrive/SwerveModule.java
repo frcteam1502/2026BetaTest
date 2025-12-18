@@ -65,7 +65,6 @@ public class SwerveModule{
     drivePIDF_Config.d(SwerveModuleCfg.MODULE_DRIVE_PID_CONTROLLER_D);
     drivePIDF_Config.velocityFF(1/DrivebaseCfg.MAX_SPEED_METERS_PER_SECOND);
 
-
     //Setup Drive Motor Config
     SparkFlexConfig driveConfig = new SparkFlexConfig();
     driveConfig.idleMode(SwerveModuleCfg.DRIVE_IDLE_MODE);
@@ -133,7 +132,7 @@ public class SwerveModule{
 
       //Calculate the motor speed output && feedforward and pass the values to the SPARK PID Controller object
       var desiredSpeed = desiredState.speedMetersPerSecond;
-      drivePIDController.setReference(desiredSpeed, SparkFlex.ControlType.kVelocity);
+      drivePIDController.setSetpoint(desiredSpeed, SparkFlex.ControlType.kVelocity);
 
       // Calculate the turning motor output from the turning PID controller.
       final double turnOutput = turningPIDController.calculate(getAbsPositionZeroed(), desiredState.angle.getRadians());
