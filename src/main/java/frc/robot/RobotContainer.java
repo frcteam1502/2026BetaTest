@@ -5,10 +5,6 @@
 package frc.robot;
 
 import frc.robot.subsystems.PowerManagement.MockDetector;
-import frc.robot.commands.AlignToAlgae;
-import frc.robot.commands.AlignToReefLeft;
-import frc.robot.commands.AlignToReefRight;
-import frc.robot.commands.AlignToReefRight;
 import frc.robot.commands.DriverCommands;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.StopDriveMotors;
@@ -54,8 +50,6 @@ public class RobotContainer {
 
     //Register named commands. Must register all commands we want Pathplanner to execute.
     NamedCommands.registerCommand("Stop Drive Motors", new StopDriveMotors(driveSubsystem));
-    NamedCommands.registerCommand("Align To Algae", new AlignToAlgae(driveSubsystem));
-
 
     //Build an Autochooser from SmartDashboard selection.  Default will be Commands.none()
     //e.g new PathPlannerAuto("MiddleAutoAMPFinal");
@@ -79,12 +73,6 @@ public class RobotContainer {
                                                         new MockDetector(),
                                                         ()->{ return false;})); //USES THE Right BUMPER TO SLOW DOWN
     Driver.Controller.start().onTrue(new ResetGyro(driveSubsystem));
-    
-    Driver.Controller.leftTrigger(0.5).whileTrue(new AlignToReefLeft(driveSubsystem));
-    Driver.Controller.rightTrigger(0.5).whileTrue(new AlignToReefRight(driveSubsystem));
-    
-
-
     
     //SysID stuff - comment out on competition build!
     Driver.Controller.y().whileTrue(driveSubsystem.sysIdQuasistatic(Direction.kForward));
