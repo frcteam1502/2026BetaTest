@@ -63,7 +63,14 @@ public class SwerveModule{
     drivePIDF_Config.p(SwerveModuleCfg.MODULE_DRIVE_PID_CONTROLLER_P);
     drivePIDF_Config.i(SwerveModuleCfg.MODULE_DRIVE_PID_CONTROLLER_I);
     drivePIDF_Config.d(SwerveModuleCfg.MODULE_DRIVE_PID_CONTROLLER_D);
-    drivePIDF_Config.velocityFF(1/DrivebaseCfg.MAX_SPEED_METERS_PER_SECOND);
+  
+    //Setup drive motor feedforward  
+    FeedForwardConfig driveFFConfig = new FeedForwardConfig();
+    driveFFConfig.kV(2.0286);
+    driveFFConfig.kA(0.24283);
+    driveFFConfig.kS(0.18994);
+
+    drivePIDF_Config.apply(driveFFConfig);
 
     //Setup Drive Motor Config
     SparkFlexConfig driveConfig = new SparkFlexConfig();

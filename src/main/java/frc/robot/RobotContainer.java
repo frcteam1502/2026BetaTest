@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -86,10 +87,10 @@ public class RobotContainer {
 
     
     //SysID stuff - comment out on competition build!
-    /*Driver.Controller.y().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    Driver.Controller.a().whileTrue(driveSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    Driver.Controller.b().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    Driver.Controller.x().whileTrue(driveSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));*/
+    Driver.Controller.y().whileTrue(driveSubsystem.sysIdQuasistatic(Direction.kForward));
+    Driver.Controller.a().whileTrue(driveSubsystem.sysIdQuasistatic(Direction.kReverse));
+    Driver.Controller.b().whileTrue(driveSubsystem.sysIdDynamic(Direction.kForward));
+    Driver.Controller.x().whileTrue(driveSubsystem.sysIdDynamic(Direction.kReverse));
 
     /* sample code
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
